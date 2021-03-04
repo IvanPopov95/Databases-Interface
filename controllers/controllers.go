@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"projectttt/models"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -13,12 +14,6 @@ import (
 // Handler struct
 type Handler struct {
 	DB *sql.DB
-}
-
-// Item main struct
-type Item struct {
-	ID   int
-	Name string
 }
 
 // NewHandler return handler for handlefunc
@@ -33,9 +28,9 @@ func (h Handler) GetItemsList(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var items []Item
+	var items []models.Item
 	for rows.Next() {
-		var item Item
+		var item models.Item
 		err := rows.Scan(&item.ID, &item.Name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -62,7 +57,7 @@ func (h Handler) GetItemWithID(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var item Item
+	var item models.Item
 	err = h.DB.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.Name, &item.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

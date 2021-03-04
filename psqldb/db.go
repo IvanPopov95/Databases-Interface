@@ -1,14 +1,15 @@
-package storage
+package psqldb
 
 import (
 	"database/sql"
 	"fmt"
 
+	// driver for postgres, use in Open
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/spf13/viper"
 )
 
-// InitDataBase postgres init
+// InitDataBase connect to psqldb
 func InitDataBase() (*sql.DB, error) {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		viper.GetString("storage.postgres.username"),

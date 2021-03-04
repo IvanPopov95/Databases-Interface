@@ -1,0 +1,33 @@
+storage:
+  postgres:
+    host: "localhost"
+    port: 5432
+    username: "postgres"
+    password: "admin123"
+    dbname: "petdb"
+  mongo:
+    host: "localhost"
+    port: 27017
+
+logging:
+  mainLogger:
+    level: "info"
+    encoding: "json"
+    outputPaths: 
+      - "./logs"
+    encoderConfig: 
+      messageKey: "message"
+      timeKey: "timestamp"
+      timeEncoder: RFC3339
+      levelKey: "level"
+      levelEncoder: "capital"
+      callerKey: "caller"
+      callerEncoder: "short"
+
+grpc_settings:
+  address: ""
+  timeout_send: 1
+  timeout_stream: 60
+  tls_client: ""
+  tls_enable: false
+  

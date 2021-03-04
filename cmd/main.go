@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 	"projectttt/controllers"
-	"projectttt/storage"
+	"projectttt/psqldb"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	db, err := storage.InitDataBase()
+	db, err := psqldb.InitDataBase()
 	if err != nil {
 		log.Fatal("Error when init database", err)
 	}
