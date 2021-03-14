@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"projectttt/models"
 	"strconv"
@@ -58,7 +59,7 @@ func (h Handler) GetItemWithID(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var item models.Item
-	err = h.DB.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.Name, &item.ID)
+	err = h.DB.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.ID, &item.Name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,8 +75,18 @@ func (h Handler) GetItemWithID(w http.ResponseWriter, req *http.Request) {
 
 // AddItem adding item
 func (h Handler) AddItem(w http.ResponseWriter, req *http.Request) {
-	name := req.URL.Query()["name"][0]
-	_, err := h.DB.Exec("INSERT INTO items(name) values($1)", name)
+	// name := req.URL.Query()["name"][0]
+	var m models.Item
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	_, err = h.DB.Exec("INSERT INTO items(name) values($1)", m.Name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

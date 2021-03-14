@@ -8,9 +8,25 @@ import (
 	"projectttt/psqldb"
 
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 )
 
+func initViper() error {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(".")
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
+
+	if err := initViper(); err != nil {
+		log.Fatal("Cannot init viper", err)
+	}
+
 	db, err := psqldb.InitDataBase()
 	if err != nil {
 		log.Fatal("Error when init database", err)

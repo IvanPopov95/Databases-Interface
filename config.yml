@@ -3,8 +3,8 @@ storage:
     host: "localhost"
     port: 5432
     username: "postgres"
-    password: "admin123"
-    dbname: "petdb"
+    password: "postgres"
+    dbname: "postgres"
   mongo:
     host: "localhost"
     port: 27017

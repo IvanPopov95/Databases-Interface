@@ -16,9 +16,7 @@ func InitDataBase() (*sql.DB, error) {
 		viper.GetString("storage.postgres.password"),
 		viper.GetString("storage.postgres.host"),
 		viper.GetString("storage.postgres.port"),
-		viper.GetString("storage.postgres.dbname"),
-	)
-
+		viper.GetString("storage.postgres.dbname"))
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
