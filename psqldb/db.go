@@ -3,6 +3,7 @@ package psqldb
 import (
 	"database/sql"
 	"fmt"
+	"projectttt/models"
 
 	// driver for postgres, use in Open
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -26,4 +27,51 @@ func InitDataBase() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+// GetItemsList get all items from db
+func GetItemsList(db *sql.DB) ([]models.Item, error) {
+	rows, err := db.Query("SELECT id, name FROM items")
+	if err != nil {
+		return nil, err
+	}
+	var items []models.Item
+	for rows.Next() {
+		var item models.Item
+		err := rows.Scan(&item.ID, &item.Name)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+	rows.Close()
+	return items, nil
+}
+
+// GetItemsList get one item with id
+func GetItemWithID(db *sql.DB, id int) (*models.Item, error) {
+	var item models.Item
+	err := db.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.ID, &item.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+// AddItem adding one item to db
+func AddItem(db *sql.DB, item models.Item) error {
+	_, err := db.Exec("INSERT INTO items(name) values($1)", item.Name)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteItem delete item with id
+func DeleteItem(db *sql.DB, id int) error {
+	_, err := db.Exec("delete from items where id=$1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

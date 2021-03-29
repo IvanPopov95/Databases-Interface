@@ -33,10 +33,10 @@ func main() {
 	}
 	handler := controllers.NewHandler(db)
 	r := mux.NewRouter()
-	r.HandleFunc("/", handler.GetItemsList).Methods("GET")
-	r.HandleFunc("/", handler.AddItem).Methods("POST")
-	r.HandleFunc("/{id:[0-9]+}", handler.GetItemWithID).Methods("GET")
-	r.HandleFunc("/{id:[0-9]+}", handler.DeleteItem).Methods("DELETE")
+	r.HandleFunc("/", handler.GetItemsListController).Methods("GET")
+	r.HandleFunc("/", handler.AddItemController).Methods("POST")
+	r.HandleFunc("/{id:[0-9]+}", handler.GetItemWithIDController).Methods("GET")
+	r.HandleFunc("/{id:[0-9]+}", handler.DeleteItemController).Methods("DELETE")
 
 	fmt.Println("starting server at :8080")
 	http.ListenAndServe(":8080", r)
