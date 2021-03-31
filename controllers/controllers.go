@@ -18,6 +18,14 @@ type Handler struct {
 	DB *sql.DB
 }
 
+// Database - interface for different databases
+type Database interface {
+	GetItemsList() ([]models.Item, error)
+	GetItemWithID(id int) (*models.Item, error)
+	AddItem(models.Item) error
+	DeleteItem(id int) error
+}
+
 // NewHandler return handler for handlefunc
 func NewHandler(db *sql.DB) Handler {
 	return Handler{DB: db}

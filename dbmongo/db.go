@@ -35,21 +35,21 @@ func InitDataBase() (*mongo.Collection, error) {
 	return collection, nil
 }
 
-// AddToDb adding element to mongodb
-func AddToDb(collection *mongo.Collection, doc interface{}) (*mongo.InsertOneResult, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+// AddItem adding element to mongodb
+func AddItem(collection *mongo.Collection, item models.Item) (*mongo.InsertOneResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	res, err := collection.InsertOne(ctx, doc)
+	res, err := collection.InsertOne(ctx, item)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-// func GetItemWithID get one item from mongo db
+// GetItemWithID get one item from mongo db
 func GetItemWithID(collection *mongo.Collection, id int) (*models.Item, error) {
 	var item models.Item
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	err := collection.FindOne(ctx, bson.D{{"id", id}}).Decode(&item)
 	if err != nil {
@@ -58,12 +58,33 @@ func GetItemWithID(collection *mongo.Collection, id int) (*models.Item, error) {
 	return &item, nil
 }
 
+// DeleteItem delete item with id
 func DeleteItem(collection *mongo.Collection, id int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	_, err := collection.DeleteOne(ctx, bson.D{{"id", id}})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// GetItemsList return all items from database
+func GetItemsList(collection *mongo.Collection) ([]models.Item, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	var items []models.Item
+	cursor, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var item models.Item
+		err := cursor.Decode(&item)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+	return items, nil
 }

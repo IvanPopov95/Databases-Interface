@@ -35,6 +35,7 @@ func GetItemsList(db *sql.DB) ([]models.Item, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	var items []models.Item
 	for rows.Next() {
 		var item models.Item
@@ -44,7 +45,6 @@ func GetItemsList(db *sql.DB) ([]models.Item, error) {
 		}
 		items = append(items, item)
 	}
-	rows.Close()
 	return items, nil
 }
 

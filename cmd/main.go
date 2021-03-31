@@ -31,6 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error when init database", err)
 	}
+
 	handler := controllers.NewHandler(db)
 	r := mux.NewRouter()
 	r.HandleFunc("/", handler.GetItemsListController).Methods("GET")
