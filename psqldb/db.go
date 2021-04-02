@@ -48,7 +48,7 @@ func GetItemsList(db *sql.DB) ([]models.Item, error) {
 	return items, nil
 }
 
-// GetItemsList get one item with id
+// GetItemWithID get one item with id
 func GetItemWithID(db *sql.DB, id int) (*models.Item, error) {
 	var item models.Item
 	err := db.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.ID, &item.Name)
