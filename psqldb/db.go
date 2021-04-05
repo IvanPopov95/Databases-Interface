@@ -69,7 +69,7 @@ func AddItem(db *sql.DB, item models.Item) error {
 
 // DeleteItem delete item with id
 func DeleteItem(db *sql.DB, id int) error {
-	_, err := db.Exec("delete from items where id=$1", id)
+	_, err := db.Exec("DELETE FROM items WHERE id=$1", id)
 	if err != nil {
 		return err
 	}

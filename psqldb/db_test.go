@@ -68,15 +68,24 @@ func TestGetItemsList(t *testing.T) {
 	assert.Len(t, items, 1)
 }
 
-// func TestAddItem(t *testing.T) {
-// 	db, mock := NewMock()
-// 	defer db.Close()
-// 	query := "INSERT INTO items(name) values($1)"
+func TestDelete(t *testing.T) {
+	db, mock := NewMock()
+	defer db.Close()
+	// sqlmock.NewRows([]string{"id", "name"}).AddRow(testItem.ID, testItem.Name)
+	query := "DELETE FROM items WHERE id=\\$1"
 
-// 	prep := mock.ExpectPrepare(regexp.QuoteMeta(query))
-// 	res := prep.ExpectExec().WithArgs(testItem.Name).WillReturnResult(sqlmock.NewResult(1, 1))
-// 	fmt.Println(res)
-// 	err := AddItem(db, testItem)
-// 	assert.NoError(t, err)
+	mock.ExpectExec(query).WithArgs(testItem.ID).WillReturnResult(sqlmock.NewResult(0, 1))
 
-// }
+	err := DeleteItem(db, testItem.ID)
+	assert.NoError(t, err)
+}
+
+func TestAddItem(t *testing.T) {
+	db, mock := NewMock()
+	defer db.Close()
+	query := "INSERT INTO items(name) values($1)"
+
+	mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(testItem.Name).WillReturnResult(sqlmock.NewResult(0, 1))
+	err := AddItem(db, testItem)
+	assert.NoError(t, err)
+}
