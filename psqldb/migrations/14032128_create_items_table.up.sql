@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS users (
     id serial,
-    name varchar(40)
+    user varchar(40)
 );

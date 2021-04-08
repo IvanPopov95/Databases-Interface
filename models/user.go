@@ -1,7 +1,7 @@
 package models
 
-// Item main struct
-type Item struct {
+// User main struct
+type User struct {
 	ID   int    `bson:"id" db:"id"`
 	Name string `bson:"name" db:"name"`
 }

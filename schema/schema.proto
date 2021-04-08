@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./";
+
+package protobuf;
+
+// Sends a sum of two strings hashes
+service SumOfHash {
+  rpc UsersSum (Users) returns (Result) {}
+}
+
+message Users {
+    string item1 = 1;
+    string item2 = 2;
+}
+
+message Result {
+    int32 sum = 1;
+}

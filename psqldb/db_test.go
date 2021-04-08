@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testItem = models.Item{
+var testUser = models.User{
 	ID:   1,
 	Name: "test",
 }
@@ -25,67 +25,66 @@ func NewMock() (*sql.DB, sqlmock.Sqlmock) {
 	return db, mock
 }
 
-func TestGetItemWithID(t *testing.T) {
+func TestGetUserWithID(t *testing.T) {
 	db, mock := NewMock()
 	defer db.Close()
-	query := "SELECT * FROM items WHERE id = $1"
+	query := "SELECT * FROM users WHERE id = $1"
 
-	rows := sqlmock.NewRows([]string{"id", "name"}).AddRow(testItem.ID, testItem.Name)
+	rows := sqlmock.NewRows([]string{"id", "name"}).AddRow(testUser.ID, testUser.Name)
 
-	mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(testItem.ID).WillReturnRows(rows)
-	item, err := GetItemWithID(db, testItem.ID)
-	assert.NotEmpty(t, item)
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(testUser.ID).WillReturnRows(rows)
+	user, err := GetUserWithID(db, testUser.ID)
+	assert.NotEmpty(t, user)
 	assert.NoError(t, err)
 }
 
-func TestGetItemWithIDError(t *testing.T) {
+func TestGetUserWithIDError(t *testing.T) {
 	db, mock := NewMock()
 	defer db.Close()
 
-	query := "SELECT * FROM items WHERE id = $1"
+	query := "SELECT * FROM users WHERE id = $1"
 
 	rows := sqlmock.NewRows([]string{"id", "name"})
 
-	mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(testItem.ID).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(testUser.ID).WillReturnRows(rows)
 
-	item, err := GetItemWithID(db, testItem.ID)
-	assert.Empty(t, item)
+	user, err := GetUserWithID(db, testUser.ID)
+	assert.Empty(t, user)
 	assert.Error(t, err)
 }
 
-func TestGetItemsList(t *testing.T) {
+func TestGetUsersList(t *testing.T) {
 	db, mock := NewMock()
 	defer db.Close()
-	query := "SELECT id, name FROM items"
+	query := "SELECT id, name FROM users"
 
-	rows := sqlmock.NewRows([]string{"id", "name"}).AddRow(testItem.ID, testItem.Name)
+	rows := sqlmock.NewRows([]string{"id", "name"}).AddRow(testUser.ID, testUser.Name)
 
 	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows)
 
-	items, err := GetItemsList(db)
-	assert.NotEmpty(t, items)
+	users, err := GetUsersList(db)
+	assert.NotEmpty(t, users)
 	assert.NoError(t, err)
-	assert.Len(t, items, 1)
+	assert.Len(t, users, 1)
 }
 
 func TestDelete(t *testing.T) {
 	db, mock := NewMock()
 	defer db.Close()
-	// sqlmock.NewRows([]string{"id", "name"}).AddRow(testItem.ID, testItem.Name)
-	query := "DELETE FROM items WHERE id=\\$1"
+	query := "DELETE FROM users WHERE id=\\$1"
 
-	mock.ExpectExec(query).WithArgs(testItem.ID).WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(query).WithArgs(testUser.ID).WillReturnResult(sqlmock.NewResult(0, 1))
 
-	err := DeleteItem(db, testItem.ID)
+	err := DeleteUser(db, testUser.ID)
 	assert.NoError(t, err)
 }
 
-func TestAddItem(t *testing.T) {
+func TestAddUser(t *testing.T) {
 	db, mock := NewMock()
 	defer db.Close()
-	query := "INSERT INTO items(name) values($1)"
+	query := "INSERT INTO users(name) values($1)"
 
-	mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(testItem.Name).WillReturnResult(sqlmock.NewResult(0, 1))
-	err := AddItem(db, testItem)
+	mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(testUser.Name).WillReturnResult(sqlmock.NewResult(0, 1))
+	err := AddUser(db, testUser)
 	assert.NoError(t, err)
 }

@@ -31,12 +31,12 @@ func InitDataBase() (*mongo.Collection, error) {
 	if err != nil {
 		return nil, err
 	}
-	collection := client.Database("testing").Collection("numbers")
+	collection := client.Database("maindb").Collection("users")
 	return collection, nil
 }
 
-// AddItem adding element to mongodb
-func AddItem(collection *mongo.Collection, item models.Item) (*mongo.InsertOneResult, error) {
+// AddUser adding element to mongodb
+func AddUser(collection *mongo.Collection, item models.User) (*mongo.InsertOneResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	res, err := collection.InsertOne(ctx, item)
@@ -46,45 +46,42 @@ func AddItem(collection *mongo.Collection, item models.Item) (*mongo.InsertOneRe
 	return res, nil
 }
 
-// GetItemWithID get one item from mongo db
-func GetItemWithID(collection *mongo.Collection, id int) (*models.Item, error) {
-	var item models.Item
+// GetUserWithID get one user from mongodb
+func GetUserWithID(collection *mongo.Collection, id int) (*models.User, error) {
+	var user models.User
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	err := collection.FindOne(ctx, bson.D{{"id", id}}).Decode(&item)
+	err := collection.FindOne(ctx, bson.D{{"id", id}}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
-	return &item, nil
+	return &user, nil
 }
 
-// DeleteItem delete item with id
-func DeleteItem(collection *mongo.Collection, id int) error {
+// DeleteUser delete user with id
+func DeleteUser(collection *mongo.Collection, id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	_, err := collection.DeleteOne(ctx, bson.D{{"id", id}})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
-// GetItemsList return all items from database
-func GetItemsList(collection *mongo.Collection) ([]models.Item, error) {
+// GetUsersList return all users from database
+func GetItemsList(collection *mongo.Collection) ([]models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
-	var items []models.Item
+	var users []models.User
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
 	for cursor.Next(context.TODO()) {
-		var item models.Item
-		err := cursor.Decode(&item)
+		var user models.User
+		err := cursor.Decode(&user)
 		if err != nil {
 			return nil, err
 		}
-		items = append(items, item)
+		users = append(users, user)
 	}
-	return items, nil
+	return users, nil
 }

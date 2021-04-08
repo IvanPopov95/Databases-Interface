@@ -29,49 +29,43 @@ func InitDataBase() (*sql.DB, error) {
 	return db, nil
 }
 
-// GetItemsList get all items from db
-func GetItemsList(db *sql.DB) ([]models.Item, error) {
-	rows, err := db.Query("SELECT id, name FROM items")
+// GetUsersList get all users from db
+func GetUsersList(db *sql.DB) ([]models.User, error) {
+	rows, err := db.Query("SELECT id, name FROM users")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []models.Item
+	var users []models.User
 	for rows.Next() {
-		var item models.Item
+		var item models.User
 		err := rows.Scan(&item.ID, &item.Name)
 		if err != nil {
 			return nil, err
 		}
-		items = append(items, item)
+		users = append(users, item)
 	}
-	return items, nil
+	return users, nil
 }
 
-// GetItemWithID get one item with id
-func GetItemWithID(db *sql.DB, id int) (*models.Item, error) {
-	var item models.Item
-	err := db.QueryRow("SELECT * FROM items WHERE id = $1", id).Scan(&item.ID, &item.Name)
+// GetUserWithID get one user with id
+func GetUserWithID(db *sql.DB, id int) (*models.User, error) {
+	var user models.User
+	err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name)
 	if err != nil {
 		return nil, err
 	}
-	return &item, nil
+	return &user, nil
 }
 
-// AddItem adding one item to db
-func AddItem(db *sql.DB, item models.Item) error {
-	_, err := db.Exec("INSERT INTO items(name) values($1)", item.Name)
-	if err != nil {
-		return err
-	}
-	return nil
+// AddUser adding one user to db
+func AddUser(db *sql.DB, user models.User) error {
+	_, err := db.Exec("INSERT INTO users(name) values($1)", user.Name)
+	return err
 }
 
-// DeleteItem delete item with id
-func DeleteItem(db *sql.DB, id int) error {
-	_, err := db.Exec("DELETE FROM items WHERE id=$1", id)
-	if err != nil {
-		return err
-	}
-	return nil
+// DeleteUser delete user with id
+func DeleteUser(db *sql.DB, id int) error {
+	_, err := db.Exec("DELETE FROM users WHERE id=$1", id)
+	return err
 }

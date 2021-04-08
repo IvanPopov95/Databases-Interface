@@ -20,10 +20,10 @@ type Handler struct {
 
 // Database - interface for different databases
 type Database interface {
-	GetItemsList() ([]models.Item, error)
-	GetItemWithID(id int) (*models.Item, error)
-	AddItem(models.Item) error
-	DeleteItem(id int) error
+	GetUsersList() ([]models.User, error)
+	GetUserWithID(id int) (*models.User, error)
+	AddUser(models.User) error
+	DeleteUser(id int) error
 }
 
 // NewHandler return handler for handlefunc
@@ -31,49 +31,48 @@ func NewHandler(db *sql.DB) Handler {
 	return Handler{DB: db}
 }
 
-// GetItemsListController return all items
-func (h Handler) GetItemsListController(w http.ResponseWriter, req *http.Request) {
-	items, err := psqldb.GetItemsList(h.DB)
+// GetUsersListController return all users
+func (h Handler) GetUsersListController(w http.ResponseWriter, req *http.Request) {
+	users, err := psqldb.GetUsersList(h.DB)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	itemsJSON, err := json.Marshal(items)
+	usersJSON, err := json.Marshal(users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-type", "application/json")
-	w.Write(itemsJSON)
+	w.Write(usersJSON)
 
 }
 
-// GetItemWithIDController get one item with id from path params
-func (h Handler) GetItemWithIDController(w http.ResponseWriter, req *http.Request) {
+// GetUserWithIDController get one user with id from path params
+func (h Handler) GetUserWithIDController(w http.ResponseWriter, req *http.Request) {
 	pathParams := mux.Vars(req)["id"]
 	id, err := strconv.Atoi(pathParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	item, err := psqldb.GetItemWithID(h.DB, id)
+	user, err := psqldb.GetUserWithID(h.DB, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	itemJSON, err := json.Marshal(*item)
+	userJSON, err := json.Marshal(*user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-type", "application/json")
-	w.Write(itemJSON)
+	w.Write(userJSON)
 }
 
-// AddItemController adding item
-func (h Handler) AddItemController(w http.ResponseWriter, req *http.Request) {
-	// name := req.URL.Query()["name"][0]
-	var m models.Item
+// AddUserController adding user
+func (h Handler) AddUserController(w http.ResponseWriter, req *http.Request) {
+	var m models.User
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -85,7 +84,7 @@ func (h Handler) AddItemController(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = psqldb.AddItem(h.DB, m)
+	err = psqldb.AddUser(h.DB, m)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -93,15 +92,15 @@ func (h Handler) AddItemController(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// DeleteItemController delete item with id
-func (h Handler) DeleteItemController(w http.ResponseWriter, req *http.Request) {
+// DeleteUserController delete user with id
+func (h Handler) DeleteUserController(w http.ResponseWriter, req *http.Request) {
 	pathParams := mux.Vars(req)["id"]
 	id, err := strconv.Atoi(pathParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = psqldb.DeleteItem(h.DB, id)
+	err = psqldb.DeleteUser(h.DB, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
